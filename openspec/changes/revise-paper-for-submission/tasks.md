@@ -4,7 +4,7 @@
 
 - [x] 1.1 The "after" version is edited directly in the Overleaf project "Smart Hydration Monitoring Agent: …" (id `6b06594961300f919abe37fb`), not as a local copy first. `paper/after/` is created only at the end (task 6.1), from `read_file` output. `paper/before/` is never modified
 - [x] 1.2 Overleaf access uses `overleaf-web-mcp` (free plan, no git). Edits use `list_projects`, `get_project_tree`, `get_sections`, `get_section_content`, `read_file`, and `write_section` (`write_file` only for `refs.bib`). Destructive tools (`delete_entities`, `manage_entity` delete, `sync_directory`, `manage_project`) are not used. Manual steps by the user: none so far
-- [ ] 1.3 The baseline Overleaf project "AIOT_DIC4_before" (DIC4-before) is left untouched. Compile it and download `paper/pdf/before.pdf` (by MCP or manually); verify that the PDF opens and shows the baseline Abstract
+- [x] 1.3 The baseline Overleaf project "AIOT_DIC4_before" (DIC4-before) is left untouched. Compile it and download `paper/pdf/before.pdf` (by MCP or manually); verify that the PDF opens and shows the baseline Abstract. **Done manually by the user:** compiled and downloaded from Overleaf on 2026-11-25, saved as `paper/pdf/DIC4_before.pdf` (the file was first saved as `paper/before/AIOT_DIC4_before.pdf` and the agent moved it). It is a valid PDF 1.5, 3 pages, 118,010 bytes. The user opened it on 2026-11-25 and confirmed that it shows the baseline version (Abstract included)
 - [x] 1.4 Read `main.tex` from the after project through the MCP and verify that it matches the local `paper/before/main.tex` (verified on 2026-11-25: the SHA-256 values match, `be5c1b3b…49db0d`)
 
 ## 2. References (prerequisite for Related Work and Introduction)
