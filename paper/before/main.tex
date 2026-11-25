@@ -1,0 +1,247 @@
+% =====================================================================
+% DIC4 -- "BEFORE" baseline version
+% Source: docs/Smart Hydration Monitoring Agent — AIoT 期末專題提案.pdf
+%         (12-slide project proposal, translated from Chinese to English)
+% This version is a faithful conversion of the proposal. Abstract,
+% Introduction and Related Work are intentionally NOT polished; they are
+% the baseline to be revised later via OpenSpec.
+% All results are planned/expected. No measured data exists yet.
+% =====================================================================
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+
+\begin{document}
+
+\title{Smart Hydration Monitoring Agent: A Smart Hydration Monitoring System Based on Weight Sensing, Machine Learning, and a Context-Aware AI Agent}
+
+\author{
+\IEEEauthorblockN{Member A}
+\IEEEauthorblockA{\textit{Hardware and IoT}}
+\and
+\IEEEauthorblockN{Member B}
+\IEEEauthorblockA{\textit{Machine Learning}}
+\and
+\IEEEauthorblockN{Member C}
+\IEEEauthorblockA{\textit{Agent and Web System}}
+}
+
+\maketitle
+
+% ---------------------------------------------------------------------
+\begin{abstract}
+This is an AIoT final project proposal for a smart hydration monitoring system. The system uses a smart water cup, a Raspberry Pi 4, an AI agent, and LINE notifications. Weight sensing is used to automatically detect drinking events, machine learning (ML) is used to recognize events and predict behavior, the agent combines context to decide reminder timing, and LINE is used to interact with the user and collect feedback. The expected contributions are a low-cost and reproducible smart hydration monitoring prototype, a weight time-series drinking event dataset, a comparison of threshold-based and ML-based event recognition, a study of the value of a context-aware AI agent for personalized reminders, and an AIoT demo with a dashboard, LINE notifications, and feedback. All experiments and results in this paper are planned; no measured results are reported.
+\end{abstract}
+
+\begin{IEEEkeywords}
+smart water cup, Raspberry Pi 4, AI agent, LINE notification, AIoT
+\end{IEEEkeywords}
+
+% ---------------------------------------------------------------------
+\section{Introduction}
+
+Why do we need smart hydration management? Traditional hydration reminders have the following problems: people easily forget to drink water; the amount of water intake needs to be recorded manually; reminders are sent at fixed times and lack personalization; there is no real sensing of drinking; and exercise and diet context are not considered.
+
+The Smart Hydration Agent proposed in this project uses weight sensing to automatically detect drinking events, uses ML to recognize events and predict behavior, uses an agent that combines context to decide when to remind, and interacts with the user through LINE and collects feedback.
+
+Research motivation: a hydration management system that combines real sensing data, personal daily-life context, and smart reminders.
+
+[To be added: 2025--2026 public research or reports as evidence, to be cited after verification.]
+
+\subsection{Research Questions}
+We define the problem with three research questions (RQs), shown in Table~\ref{tab:rq}.
+
+\begin{table}[htbp]
+\caption{Problem Definition and Three Research Questions}
+\label{tab:rq}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{0.06\columnwidth}p{0.32\columnwidth}p{0.28\columnwidth}p{0.22\columnwidth}@{}}
+\toprule
+\textbf{RQ} & \textbf{Research Question} & \textbf{Technique and Experiment (Planned)} & \textbf{Metrics} \\
+\midrule
+RQ1 & Can a low-cost weight sensor automatically estimate drinking events and water intake? & Load Cell + HX711, Task A; Experiment 1: Threshold vs.\ ML & F1, intake MAE \\
+\midrule
+RQ2 & Can historical drinking records and activity context predict personal drinking behavior? & Task B (exploratory); Experiment 2 & Precision, Recall, F1, PR-AUC \\
+\midrule
+RQ3 & Can ML + AI Agent improve the appropriateness of reminders? & AI Agent + LINE; Experiment 3: three reminder strategies & Acceptance rate, ineffective reminder ratio, satisfaction \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Objectives}
+The project has four objectives. Each objective corresponds to at least one research question.
+\begin{enumerate}
+\item \textbf{Low-cost monitoring device:} a reproducible prototype with weight sensing and a Raspberry Pi (RQ1).
+\item \textbf{Automatic logging and analysis:} automatically record drinking events and analyze personal drinking patterns (RQ1, RQ2).
+\item \textbf{Machine Learning:} drinking event recognition and drinking behavior prediction (RQ1, RQ2).
+\item \textbf{Context-aware agent:} tool calling, context analysis, and LINE notification (RQ3).
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Related Work}
+
+Traditional hydration reminders: people easily forget to drink water; manual recording of water intake is required; fixed-time reminders lack personalization; there is no real drinking sensing; exercise and diet context are not considered.
+
+[To be added: 2025--2026 public research or reports as evidence, to be cited after verification.]
+
+% ---------------------------------------------------------------------
+\section{System Architecture}
+
+The overall system architecture consists of five layers:
+\begin{itemize}
+\item \textbf{IoT Layer:} (1) Water Cup + Load Cell; (2) HX711 ADC; (3) Raspberry Pi 4 (Data Collector).
+\item \textbf{Data Layer:} (4) FastAPI Backend; (5) SQLite Database.
+\item \textbf{ML Layer:} (6) Task A, event recognition; (7) Task B, behavior prediction.
+\item \textbf{Agent Layer:} (8) AI Agent (LLM Planner + Tools + rule-based decision).
+\item \textbf{Application Layer:} (9) Web Dashboard (Next.js); (10) LINE Bot (notification and feedback).
+\end{itemize}
+The feedback loop is: Sensing $\rightarrow$ Prediction $\rightarrow$ Decision $\rightarrow$ Notification $\rightarrow$ Feedback $\rightarrow$ DB Update.
+
+% ---------------------------------------------------------------------
+\section{Hardware and IoT Design}
+
+\begin{itemize}
+\item \textbf{Load Cell:} measures the weight of the water cup; requires calibration (zero point and known weight).
+\item \textbf{HX711:} amplifies the weak signal and performs ADC conversion; passes digital data to the Raspberry Pi.
+\item \textbf{Raspberry Pi 4:} runs a Python data collector; performs preliminary processing and sends data to the backend.
+\end{itemize}
+
+\textit{Illustrative example (not a measurement):} if the cup weighs 550\,g, the user picks up the cup (the reading drops), and the cup is put back at 420\,g, then
+\begin{equation}
+\Delta W = 550 - 420 = 130\ \text{g} \approx 130\ \text{mL},
+\end{equation}
+assuming the density of water is about 1\,g/mL.
+
+A weight decrease is not necessarily drinking. The system needs to distinguish Drinking, Refilling, Cup Movement, Pouring, and Sensor Noise.
+
+% ---------------------------------------------------------------------
+\section{Dataset and Context Data}
+
+\begin{itemize}
+\item \textbf{IoT data:} Timestamp, Cup Weight, Weight Difference, Drinking Event, Estimated Intake.
+\item \textbf{Behavioral features:} Time Since Last Drink, Daily Intake, Hour of Day, Drinking Frequency.
+\item \textbf{Context features (logged via the dashboard):} Exercise Type, Duration, Intensity, Meal Type, Caffeine Intake.
+\item \textbf{Agent interaction:} Reminder Sent, Type, Response, Acceptance, User Preferences.
+\end{itemize}
+The data will be self-collected; no public dataset is used. Ground truth requires manual confirmation. The scale is limited and does not represent all users. Data will be anonymized.
+
+% ---------------------------------------------------------------------
+\section{Machine Learning Design}
+
+Two ML tasks are planned (Table~\ref{tab:ml}). Task A, drinking event recognition, is the main task. Task B, drinking behavior prediction, is secondary and depends on the amount of data.
+
+\begin{table}[htbp]
+\caption{Two Planned ML Tasks}
+\label{tab:ml}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{0.16\columnwidth}p{0.38\columnwidth}p{0.38\columnwidth}@{}}
+\toprule
+ & \textbf{Task A: Drinking Event Recognition (main)} & \textbf{Task B: Drinking Behavior Prediction (secondary, data-dependent)} \\
+\midrule
+Target & Drinking / Refilling / Cup Movement / Other & Probability of a drinking event within the next 60 minutes \\
+\midrule
+Input & Weight Difference, Slope, Stability, time-window features & Historical drinking times and frequency, Time Since Last Drink, exercise and diet context \\
+\midrule
+Baseline & Threshold-based Detection & Fixed Interval, Historical Average \\
+\midrule
+Models & Random Forest, XGBoost & Logistic Regression, Random Forest, XGBoost \\
+\midrule
+Metrics & Precision, Recall, F1, Confusion Matrix & Precision, Recall, F1, PR-AUC \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+If the data are insufficient, we will not claim that a reliable personalized prediction model has been built.
+
+% ---------------------------------------------------------------------
+\section{AI Agent and LINE Notification}
+
+\subsection{Workflow}
+\begin{enumerate}
+\item Read drinking records and progress.
+\item Call ML prediction.
+\item Query context, preferences, and cooldown.
+\item Decide by rules whether to remind.
+\item Send via LINE and receive the reply.
+\item Write back to the DB and adjust subsequent strategy.
+\end{enumerate}
+
+\subsection{Agent Tools}
+\texttt{get\_water\_intake\_history()}, \texttt{get\_current\_daily\_intake()}, \texttt{predict\_drinking\_behavior()}, \texttt{get\_user\_preferences()}, \texttt{get\_activity\_context()}, \texttt{check\_reminder\_cooldown()}, \texttt{send\_line\_reminder()}, \texttt{record\_user\_feedback()}.
+
+\subsection{LINE Notification}
+\textit{Illustrative example:} ``You have not had water for a while. If convenient, you may replenish water.'' with the reply options ``Already drank'', ``Remind me later'', and ``Not needed for now''.
+
+ML = Prediction; Agent = Decision \& Action; LINE = Notification \& Interaction. The LLM is only responsible for understanding and text generation; water intake calculation and prediction are performed by program code and ML models.
+
+% ---------------------------------------------------------------------
+\section{Web Dashboard and Context Analysis}
+
+\begin{itemize}
+\item \textbf{Overview:} today's water intake; number of drinks and last drink; goal progress; recent events.
+\item \textbf{Logging:} exercise type, duration, intensity; diet and caffeine; goals and reminder preferences; reminder feedback.
+\item \textbf{Analytics:} hourly drinking pattern; daily trend and intervals; exercise/diet vs.\ drinking.
+\item \textbf{Agent Insights:} analysis summaries generated from actual records; reminder history can be queried.
+\end{itemize}
+All charts and values in the dashboard design are illustrative examples, not measured results.
+
+% ---------------------------------------------------------------------
+\section{Experimental Design and Timeline (Planned)}
+
+\subsection{Three Reminder Strategies (Planned)}
+\begin{itemize}
+\item[A] Fixed-time reminder.
+\item[B] ML-based reminder.
+\item[C] ML + AI Agent.
+\end{itemize}
+
+\subsection{Evaluation Metrics (Planned)}
+Event recognition F1; acceptance rate and ineffective reminder ratio; satisfaction, system latency, and record completeness.
+
+\subsection{Six-Week Timeline}
+\begin{itemize}
+\item[W1] Hardware and sensor calibration.
+\item[W2] Data collection and DB.
+\item[W3] Data processing and ML.
+\item[W4] Backend and dashboard.
+\item[W5] Agent and LINE.
+\item[W6] Integration, experiments, and demo.
+\end{itemize}
+
+\subsection{Division of Work}
+A: hardware and IoT; B: machine learning; C: agent and web system. Shared: integration, testing, experiment analysis, and report.
+
+% ---------------------------------------------------------------------
+\section{Expected Contributions}
+
+\begin{enumerate}
+\item A low-cost, reproducible smart hydration monitoring prototype.
+\item A weight time-series drinking event dataset.
+\item A comparison of threshold-based and ML-based event recognition.
+\item A study of the value of a context-aware AI agent for personalized reminders.
+\item An AIoT demo with a dashboard, LINE notifications, and feedback.
+\end{enumerate}
+
+% ---------------------------------------------------------------------
+\section{Conclusion}
+
+This is not simply a hydration reminder app, but a smart hydration management system that combines real sensing data, ML prediction, a context-aware agent, and actual notifications. From Passive Water Tracking to Proactive, Context-Aware Hydration Assistance.
+
+% ---------------------------------------------------------------------
+% References: the source proposal contains NO references (only a
+% placeholder "to be added after verification"). refs.bib is therefore
+% empty. Uncomment the two lines below once verified entries are added
+% to refs.bib and cited with \cite{...}.
+% \bibliographystyle{IEEEtran}
+% \bibliography{refs}
+
+\end{document}
