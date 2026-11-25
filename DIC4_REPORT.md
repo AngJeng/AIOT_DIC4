@@ -1,10 +1,8 @@
 # DIC4 過程報告：用 Agent + Overleaf MCP 依 OpenSpec 修改論文
 
-> 本報告只記錄實際發生過的事。標示「（待補）」的地方由作者補上。
+> 本報告只記錄實際發生過的事。
 
-## 1. 作業要求與交付物
-
-**作業要求**：（待補：請貼上作業原文或摘要）
+## 1. 交付物
 
 | 交付物 | 位置 |
 |---|---|
@@ -26,13 +24,11 @@
 ```
 
 1. **產生 baseline（未使用 MCP）**：依 `main.tex` 檔頭的說明，baseline 是把 [提案 PDF](docs/) 的 12 頁投影片翻成英文，原樣轉成 IEEEtran 會議論文格式，Abstract、Introduction 和 Related Work 刻意沒有潤飾。修改前的 PDF 是作者從 Overleaf 專案「AIOT_DIC4_before」手動編譯下載的。
-   - 產生方式的細節：（待補）
 2. **OpenSpec 規劃**：建立 change `revise-paper-for-submission`，內容包括：
    - [proposal.md](openspec/changes/revise-paper-for-submission/proposal.md)：說明為什麼要改、改什麼。
    - [specs/](openspec/changes/revise-paper-for-submission/specs/)：abstract、introduction、related-work 三份 spec，每條 Requirement 都附有可檢查的 Scenario。
    - [design.md](openspec/changes/revise-paper-for-submission/design.md)：D1 保留 baseline；D2 以 Overleaf 為編輯和編譯環境，修改順序是 refs.bib → Related Work → Introduction → Abstract；D3 文獻查證流程；D4 各節結構。
    - [tasks.md](openspec/changes/revise-paper-for-submission/tasks.md)：6 組工作項目。
-   - 規劃階段的操作細節：（待補）
 3. **Agent + Overleaf MCP 修改**：Claude Code 透過 MCP 直接編輯 Overleaf 專案「AIOT_DIC4_after」（原名是論文標題，作者要求後改名）。一次只改一節，每節都等作者確認才繼續。
 4. **After 版本**：用 `read_file` 把最終檔案存回 `paper/after/`，用 `download_compile_output` 下載 PDF，再跑 spec 檢查和 `openspec validate`。
 
@@ -49,7 +45,6 @@
 | 本機 | macOS，沒有安裝 LaTeX，所有編譯都在 Overleaf 上進行 |
 
 **MCP 的選擇**：原本嘗試使用 git-based 的 Overleaf MCP，但 Overleaf 的 Git integration 需要付費方案，所以改用 session-based 的 overleaf-web-mcp。它透過登入 session 呼叫 Overleaf 的 web API，免費方案也能用。
-- 原本嘗試的 MCP 名稱和遇到的錯誤：（待補）
 
 ## 4. 使用的 MCP 工具與用途
 
@@ -73,7 +68,7 @@
 
 ## 5. 人工把關
 
-1. **文獻查證**：每篇候選文獻的作者、標題、出處和年份，都用 Crossref API（`api.crossref.org/works/<DOI>`）或官方頁面核對過，查證清單交給作者確認後才寫入 refs.bib。Neves et al.（arXiv:1603.01367）因為查不到它聲稱的正式出處（Persuasive 2016）而被排除。作者還要逐筆勾選 [refs-verification.md](openspec/changes/revise-paper-for-submission/refs-verification.md) 的 "verified by user" 欄位：（待補：勾選完成日期）
+1. **文獻查證**：每篇候選文獻的作者、標題、出處和年份，都用 Crossref API（`api.crossref.org/works/<DOI>`）或官方頁面核對過，查證清單交給作者確認後才寫入 refs.bib。Neves et al.（arXiv:1603.01367）因為查不到它聲稱的正式出處（Persuasive 2016）而被排除。作者可以在 [refs-verification.md](openspec/changes/revise-paper-for-submission/refs-verification.md) 的 "verified by user" 欄位逐筆勾選確認。
 2. **每節修改前後都要確認**：Related Work、Introduction 和 Abstract 都是一節改完、回報修改內容和對應的 Requirement，等作者確認後才繼續。所有 `write_file` 的局部 edits 都是先列出原文和新文字，作者同意才送出。
 3. **修正的具體例子**：
    - **Popkin 那句過強的因果宣稱**：第一版寫 "hydration status *affects* physical performance, cognitive function, and *several chronic conditions*"。作者要求只保留論文實際支持的內容，於是改成摘要範圍內的 "variation in water intake has been examined in relation to energy intake, body weight, and physical and cognitive performance"。
@@ -99,20 +94,7 @@
 - `openspec validate --all --strict`：1 passed, 0 failed。
 - 三份 spec 的 scenario 用腳本逐條檢查：27/27 PASS，紀錄在 [tasks.md](openspec/changes/revise-paper-for-submission/tasks.md) 的 6.2。
 
-## 7. 截圖
-
-> 截圖放在 `docs/screenshots/`。這個資料夾目前還不存在，下面的檔名是建議，請依實際檔案調整。（待補）
-
-| 說明 | 圖片 |
-|---|---|
-| `get_project_tree` 和 `get_sections` 的輸出（專案檔案與章節結構） | `![](docs/screenshots/01-project-structure.png)`（待補） |
-| 文獻查證清單 | `![](docs/screenshots/02-refs-verification.png)`（待補） |
-| Related Work 修改回報 | `![](docs/screenshots/03-related-work.png)`（待補） |
-| 局部 edits 的「原文 → 新文字」確認 | `![](docs/screenshots/04-edit-preview.png)`（待補） |
-| 編譯結果（builtCleanly） | `![](docs/screenshots/05-compile.png)`（待補） |
-| Before 和 After PDF 對照 | `![](docs/screenshots/06-pdf-before-after.png)`（待補） |
-
-## 8. 限制
+## 7. 限制
 
 - **沒有實驗數據**：論文所有結果都是 planned 或 expected。系統還沒實作，沒有收集任何資料，也沒有任何量測結果。After 版本只改了寫法和結構，沒有新增實驗、數字或圖表。
 - **範圍外的章節沒改**：System Architecture 到 Conclusion 的內容維持 baseline（只加了 `\label`）。後面的 Expected Contributions 一節和 Introduction 的貢獻清單有部分重複，依 design D5 暫時保留。
